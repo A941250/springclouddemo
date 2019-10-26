@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true" scanPeriod="60 seconds"
+	debug="ture">
+	<property name="LOG_HOME" value="${catalina.home}/logs" />
+	<timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss" />
+	<contextName>ddb</contextName>
+	<!--写入日志到控制台的appender,用默认的,但是要去掉charset,否则windows下tomcat下乱码-->
+    <!-- 控制台输出 -->   
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> 
+             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符--> 
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>   
+        	<charset class="java.nio.charset.Charset">UTF-8</charset>
+        </encoder> 
+    </appender>
+
+	<appender name="FILE_DEBUG"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/debug/debug_%d{yyyyMMddHH}.log
+			</fileNamePattern>
+			<maxHistory>15</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date %-4relative [%thread] %-5level %logger{35} - %msg%n
+			</pattern>
+			<charset  class="java.nio.charset.Charset">UTF-8</charset>
+		</encoder>
+				<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<!--过滤 Error -->
+			<level>DEBUG</level>
+			<!--匹配到就允许 -->
+			<onMatch>ACCEPT</onMatch>
+			<!--没有匹配到就禁止 -->
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+    
+    <appender name="FILE_INFO"
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy
+            class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/info/info_%d{yyyyMMdd}.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %-4relative [%thread] %-5level %logger{35} - %msg%n
+            </pattern>
+            <charset  class="java.nio.charset.Charset">UTF-8</charset>
+        </encoder>
+                <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <!--过滤 Error -->
+            <level>INFO</level>
+            <!--匹配到就允许 -->
+            <onMatch>ACCEPT</onMatch>
+            <!--没有匹配到就禁止 -->
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+	<appender name="FILE_ERROR"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/error/err_%d{yyyyMMdd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date %-4relative [%thread] %-5level %logger{35} - %msg%n
+			</pattern>
+			<charset  class="java.nio.charset.Charset">UTF-8</charset>
+		</encoder>
+				<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<!-- Error -->
+			<level>ERROR</level>
+			<!--匹配到就允许 -->
+			<onMatch>ACCEPT</onMatch>
+			<!--没有匹配到就禁止 -->
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	
+	<logger name="org.apache.http" level="WARN">
+ 	</logger>
+    
+	<logger name="org.springframework" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="org.mybatis.spring" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT" /> 
+		<appender-ref ref="FILE_DEBUG" /> 
+		<appender-ref ref="FILE_INFO" />
+		<appender-ref ref="FILE_ERROR" />
+	</root>
+</configuration>
